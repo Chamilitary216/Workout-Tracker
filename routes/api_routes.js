@@ -1,5 +1,12 @@
 const db = require ("../models")
-module.export = (app) => {
+module.exports = (app) => {
+
+
+    app.post ("/api/workouts", (req,res) => {
+        db.Workout.create ({}).then(newWorkout => {
+            res.json (newWorkout);
+        });
+    });
 
     app.get("/api/workouts", (req, res) => {
         db.Workout.find({}, (err, workouts) => {
@@ -8,6 +15,17 @@ module.export = (app) => {
             }else {
                 res.json(workouts)
             }
+        });
+    });
+
+    app.put("/api/workouts/:workout", ({ params, body }, res) => {
+        db.Workout.findOneAndUpdate(
+            { _id: params.id}, 
+            {$push: {excercises:body }},
+            { upsert: true, useFindandModify:false},
+            updatedWorkout => {
+            res.json(updatedWorkout);
+                                    
         });
     });
 }
